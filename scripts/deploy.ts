@@ -15,6 +15,18 @@ async function main() {
   await tx.wait();
 
   console.log("Mensagem alterada:", await hello.getMessage());
+  // Pega a factory do contrato
+  const ContaCorrente = await ethers.getContractFactory("ContaCorrente");
+
+  // Faz o deploy
+  const conta = await ContaCorrente.deploy();
+  await conta.deploymentTransaction()?.wait();
+
+  console.log("✅ ContaCorrente deployado em:", conta.target);
+
+  // Só para validar: checar saldo do contrato
+  const saldoContrato = await conta.saldoDoContrato();
+  console.log("💰 Saldo inicial do contrato:", saldoContrato.toString());
 }
 
 main().catch((error) => {

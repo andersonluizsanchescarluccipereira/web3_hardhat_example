@@ -4,6 +4,10 @@ import "ts-node/register";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.28",
+  typechain: {
+    outDir: "typechain-types",
+    target: "ethers-v6",
+  },
   paths: {
     sources: "./contracts",
     tests: "./test",
