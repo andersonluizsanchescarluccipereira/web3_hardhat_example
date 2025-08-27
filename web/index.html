@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste ContaCorrente</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { padding: 5px; margin: 5px; }
+    .section { margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Teste ContaCorrente</h1>
+
+  <div class="section">
+    <h2>Deploy do contrato</h2>
+    <button id="deployBtn">Deploy</button>
+    <p>Endereço: <span id="deployAddress">-</span></p>
+  </div>
+
+  <div class="section">
+    <h2>Depositar ETH</h2>
+    <input type="text" id="depositAmount" placeholder="Valor em ETH" />
+    <button id="depositBtn">Depositar</button>
+  </div>
+
+  <div class="section">
+    <h2>Consultar saldo</h2>
+    <input type="text" id="saldoAddress" placeholder="Endereço" />
+    <button id="saldoBtn">Consultar</button>
+    <p>Saldo: <span id="saldoValue">-</span> ETH</p>
+  </div>
+
+  <div class="section">
+    <h2>Transferir saldo</h2>
+    <input type="text" id="transferTo" placeholder="Endereço destino" />
+    <input type="text" id="transferAmount" placeholder="Valor em ETH" />
+    <button id="transferBtn">Transferir</button>
+  </div>
+
+  <script>
+    const BASE_URL = "http://localhost:3000";
+
+    document.getElementById("deployBtn").addEventListener("click", async () => {
+      const url = `${BASE_URL}/deploy`
+      console.log(url);
+      const res = await fetch(url, { method: "POST" });
+      const data = await res.json();
+      document.getElementById("deployAddress").innerText = data.address;
+      alert("Contrato deployado!");
+    });
+
+    document.getElementById("depositBtn").addEventListener("click", async () => {
+      const amount = document.getElementById("depositAmount").value;
+      await fetch(`${BASE_URL}/depositar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount })
+      });
+      alert(`Depositado ${amount} ETH`);
+    });
+
+    document.getElementById("saldoBtn").addEventListener("click", async () => {
+      const address = document.getElementById("saldoAddress").value;
+      const res = await fetch(`${BASE_URL}/saldo/${address}`);
+      const data = await res.json();
+      document.getElementById("saldoValue").innerText = (parseFloat(data.saldo)/1e18).toString();
+    });
+
+    document.getElementById("transferBtn").addEventListener("click", async () => {
+      const to = document.getElementById("transferTo").value;
+      const amount = document.getElementById("transferAmount").value;
+      await fetch(`${BASE_URL}/transferir`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, amount })
+      });
+      alert(`Transferido ${amount} ETH para ${to}`);
+    });
+  </script>
+</body>
+</html>
